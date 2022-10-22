@@ -23,3 +23,43 @@
   padding-top: 1px;
   padding-bottom: 1px;
 }
+
+.card {
+  box-shadow: 0 7px 10px 0 rgba(20, 118, 131, 0.2);
+  max-width: 400px;
+  margin: 5px;
+  text-align: center;
+  padding: auto auto auto auto;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+}
+
+.event-button {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: rgb(38, 76, 159);
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 14px;
+}
+
+.gridcontainer {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 10px;
+  padding: 12px;
+}
+
+.griditem {
+  border: 1px rgba(10, 51, 49, 0.8);
+  padding: 20px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.center {
+  text-align: center;
+}

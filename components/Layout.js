@@ -1,7 +1,7 @@
 import styles from '../styles/components/Layout.module.css';
-
+import { useSignOut } from '@nhost/nextjs'
 import React, { Fragment } from 'react';
-import { useUserContext } from '../UserProvider';
+import { useUserContext } from '../UserProvider'
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, Transition } from '@headlessui/react';
@@ -10,28 +10,36 @@ import {
   HomeIcon,
   LogoutIcon,
   UserIcon,
+  PencilIcon,
+  MapIcon
 } from '@heroicons/react/outline';
 import Avatar from './Avatar';
 
 const Layout = ({ children = null }) => {
   const { user } = useUserContext();
+  const { signOut } = useSignOut()
 
   const menuItems = [
-    {
-      label: 'Dashboard',
-      href: '/',
-      icon: HomeIcon,
-    },
     {
       label: 'Profile',
       href: '/profile',
       icon: UserIcon,
     },
     {
-      label: 'Logout',
-      onClick: () => null,
-      icon: LogoutIcon,
+      label: 'Events Dashboard',
+      href: '/',
+      icon: HomeIcon,
     },
+    {
+      label: 'Create Event',
+      href: '/create-event',
+      icon: MapIcon,
+    },
+    {
+      label: 'Logout',
+      onClick: signOut,
+      icon: LogoutIcon
+    }
   ];
 
   return (
@@ -50,9 +58,12 @@ const Layout = ({ children = null }) => {
               </a>
             </Link>
           </div>
+          <div className={styles['app-title']}><strong><h1>Events Near Me</h1></strong></div>
+
 
           <Menu as="div" className={styles.menu}>
             <Menu.Button className={styles['menu-button']}>
+              <a className={styles.white}>Welcome, {user?.metadata?.firstName || 'stranger'}{' '} &nbsp; </a>
               <Avatar src={user?.avatarUrl} alt={user?.displayName} />
               <ChevronDownIcon />
             </Menu.Button>

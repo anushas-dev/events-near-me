@@ -1,24 +1,56 @@
 import styles from '../styles/pages/Profile.module.css';
-
 import { useState } from 'react';
 import { useUserContext } from '../UserProvider';
 import Head from 'next/head';
 import Layout from '../components/Layout';
 import Input from '../components/Input';
+import { gql, useMutation } from '@apollo/client'
+import { toast } from 'react-hot-toast'
+import withAuth from '../withAuth';
 
+const UPDATE_USER_MUTATION = gql`
+  mutation ($id: uuid!, $displayName: String!, $metadata: jsonb) {
+    updateUser(pk_columns: { id: $id }, _set: { displayName: $displayName, metadata: $metadata }) {
+      id
+      displayName
+      metadata
+    }
+  }
+`
 const Profile = () => {
   const { user } = useUserContext();
 
   const [firstName, setFirstName] = useState(user?.metadata?.firstName ?? '');
   const [lastName, setLastName] = useState(user?.metadata?.lastName ?? '');
+  const [preferences, setPreferences] = useState(user?.metadata?.preferences ?? '');
 
   const isFirstNameDirty = firstName !== user?.metadata?.firstName;
   const isLastNameDirty = lastName !== user?.metadata?.lastName;
-  const isProfileFormDirty = isFirstNameDirty || isLastNameDirty;
+  const isPreferencesDirty = preferences !== user?.metadata?.preferences;
+  const isProfileFormDirty = isFirstNameDirty || isLastNameDirty || isPreferencesDirty;
 
-  const updateUserProfile = async e => {
-    e.preventDefault();
-  };
+  const [mutateUser, { loading: updatingProfile }] = useMutation(UPDATE_USER_MUTATION)
+
+  const updateUserProfile = async (e) => {
+    e.preventDefault()
+
+    try {
+      await mutateUser({
+        variables: {
+          id: user.id,
+          displayName: `${firstName} ${lastName}`.trim(),
+          metadata: {
+            firstName,
+            lastName,
+            preferences
+          }
+        }
+      })
+      toast.success('Updated successfully', { id: 'updateProfile' })
+    } catch (error) {
+      toast.error('Unable to update profile', { id: 'updateProfile' })
+    }
+  }
 
   return (
     <Layout>
@@ -59,6 +91,13 @@ const Profile = () => {
                   readOnly
                 />
               </div>
+              <Input
+                type="text"
+                label="Event Preferences"
+                value={preferences}
+                onChange={e => setPreferences(e.target.value)}
+                required
+              />
             </div>
 
             <div className={styles['form-footer']}>
@@ -77,4 +116,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default withAuth(Profile);
